@@ -1,0 +1,44 @@
+const button = document.getElementById('button');
+button.addEventListener('click', getPokemon);
+
+const input = document.getElementById('input');
+const pokemonImg = document.getElementById('pokemonImg');
+const pokemonContainer = document.getElementById('pokemonContainer');
+
+input.addEventListener('keypress', function(e){
+  if(e.key == 'Enter'){
+    getPokemon()
+  }
+})
+
+
+function getPokemon(){
+    let inputValue = input.value.toLowerCase();
+
+    fetch(`https://pokeapi.co/api/v2/pokemon/${inputValue}`).then(pokemon => pokemon.json()).then(data => 
+    inputValue ? showPokemon(data) : pokemonContainer.classList.add("invisible"))
+    .catch(() => {
+          document.getElementById('pokeDex').innerHTML = `Please enter a valid pokemon name`;
+          pokemonContainer.classList.add("invisible");
+    })
+
+}
+
+
+function showPokemon(data){
+    pokemonContainer.classList.remove("invisible");
+    document.getElementById('pokeDex').innerHTML = `PokeDex`;
+    pokemonImg.setAttribute('src',data.sprites.other["official-artwork"].front_default);
+    document.getElementById('pokemonHp').innerHTML = `HP: ${data.stats[0].base_stat}`;
+    document.getElementById('pokemonAttack').innerHTML = `Attack: ${data.stats[1].base_stat}`;
+    document.getElementById('pokemonDefence').innerHTML = `Defense: ${data.stats[2].base_stat}`;
+    document.getElementById('pokemonSpeed').innerHTML = `Speed: ${data.stats[5].base_stat}`;
+    document.getElementById('pokemonName').innerHTML = upperName(data.species.name);
+
+
+}
+
+
+function upperName(name) {
+    return name.charAt(0).toUpperCase() + name.slice(1);
+};
